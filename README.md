@@ -335,7 +335,7 @@ This project is licensed under the **GPLv3** - see the [LICENSE](LICENSE) file f
 **📬 Questions? Issues? Ideas?**  
 [💬 Start a Discussion](https://github.com/VyasaAi/eyeview.ai/discussions) • [🐛 Report Bug](https://github.com/VyasaAi/eyeview.ai/issues) • [💡 Request Feature](https://github.com/VyasaAi/eyeview.ai/issues)
 
-<img width="800" height="444" alt="image" src="https://github.com/user-attachments/assets/d4b23505-4483-4b4a-a70f-93764ae65727" />
+<!-- <img width="800" height="444" alt="image" src="https://github.com/user-attachments/assets/d4b23505-4483-4b4a-a70f-93764ae65727" /> -->
 
 ---
 
