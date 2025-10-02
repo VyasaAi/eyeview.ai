@@ -3,7 +3,7 @@
 <div align="center">
 
 ![EyeView Logo](https://img.shields.io/badge/EyeView-AI%20Powered-blue?style=for-the-badge&logo=eye&logoColor=white)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-GPL3.0-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/GPL3.0)
 [![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
 [![Flask](https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
