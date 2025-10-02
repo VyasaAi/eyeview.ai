@@ -1,6 +1,6 @@
-# Contributing to EyeView\_v2
+# Contributing to eyeview.ai
 
-EyeView\_v2 is an open-source real-time violence detection system. We welcome contributions from everyone! Whether you are fixing bugs, adding features, or improving documentation, your help makes the project better.
+eyeview.ai is an open-source real-time violence detection system. We welcome contributions from everyone! Whether you are fixing bugs, adding features, or improving documentation, your help makes the project better.
 
 This guide provides rules, regulations, and steps for newcomers who want to contribute.
 
@@ -30,7 +30,7 @@ Download your fork to your local machine:
 
 ```bash
 git clone <your-fork-url>
-cd EyeView_v2
+cd eyeview.ai
 ```
 
 ### 3. Create a Branch
@@ -76,5 +76,5 @@ Your contribution helps the project grow and makes EyeView\_v2 better for everyo
 
 ---
 
-**Welcome to the EyeView\_v2 community!**
+**Welcome to the eyeview.ai community!**
 Your contributions make a real difference.
