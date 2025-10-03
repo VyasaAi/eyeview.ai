@@ -183,6 +183,16 @@ os.makedirs(clip_save_dir, exist_ok=True)
 print(f"Clip save directory set to: {clip_save_dir}")
 
 
+def get_location():
+    """Fetches the public IP based location."""
+    try:
+        response = requests.get("http://ip-api.com/json/", timeout=5)
+        response.raise_for_status()
+        data = response.json()
+        return f"{data.get('city', 'N/A')}, {data.get('regionName', 'N/A')}, {data.get('country', 'N/A')}"
+    except requests.exceptions.RequestException as e:
+        print(f"Could not get location: {e}")
+        return "Unknown Location"
 
 def detect_and_stream():
     """
