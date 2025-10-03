@@ -251,6 +251,95 @@ def send_alert(confidence):
             print(f"Error sending Twilio SMS: {e}")
 
 
+def save_clip(directory, filename, frames):
+    """Saves a list of frames to a video file using ffmpeg."""
+    if not frames:
+        print("Clip save failed: No frames in the buffer.")
+        return
+
+
+    filepath = os.path.join(directory, filename)
+    print(f"Saving clip to: {filepath} ({len(frames)} frames)")
+
+
+    # Create temp dir for frames
+    temp_dir = os.path.join(directory, f'temp_frames_{os.path.splitext(filename)[0]}')
+    os.makedirs(temp_dir, exist_ok=True)
+
+
+    # Save frames as png
+    for i, frame in enumerate(frames):
+        frame_path = os.path.join(temp_dir, f'frame_{i:04d}.png')
+        cv2.imwrite(frame_path, frame)
+
+
+    # Use ffmpeg to create mp4
+    ffmpeg_cmd = [
+        'C:\\ffmpeg-master-latest-win64-gpl-shared\\bin\\ffmpeg.exe',
+        '-y',  # overwrite
+        '-framerate', str(FPS),
+        '-i', os.path.join(temp_dir, 'frame_%04d.png'),
+        '-c:v', 'libx264',
+        '-pix_fmt', 'yuv420p',
+        filepath
+    ]
+
+
+    try:
+        subprocess.run(ffmpeg_cmd, check=True)
+        print(f"Clip successfully saved: {filename}")
+
+
+        # Generate thumbnail from the first frame
+        thumbnail_filename = f"{os.path.splitext(filename)[0]}_thumb.jpg"
+        thumbnail_path = os.path.join(directory, thumbnail_filename)
+
+
+        thumbnail_cmd = [
+            'C:\\ffmpeg-master-latest-win64-gpl-shared\\bin\\ffmpeg.exe',
+            '-y',  # overwrite
+            '-i', filepath,
+            '-ss', '00:00:00.100',  # Take frame at 0.1 seconds (earlier for short clips)
+            '-vframes', '1',  # Extract 1 frame
+            '-q:v', '2',  # High quality
+            thumbnail_path
+        ]
+
+
+        try:
+            subprocess.run(thumbnail_cmd, check=True)
+            print(f"Thumbnail generated: {thumbnail_filename}")
+        except subprocess.CalledProcessError as e:
+            print(f"Failed to generate thumbnail: {e}")
+
+
+    except subprocess.CalledProcessError as e:
+        print(f"Failed to create video with ffmpeg: {e}")
+        # Clean up temp frames on failure
+        for f in os.listdir(temp_dir):
+            os.remove(os.path.join(temp_dir, f))
+        os.rmdir(temp_dir)
+        return
+
+
+    # Clean up temp frames
+    for f in os.listdir(temp_dir):
+        os.remove(os.path.join(temp_dir, f))
+    os.rmdir(temp_dir)
+
+
+    # Update history in Firebase
+    if firebase_initialized:
+        clip_metadata = {
+            "filename": filename,
+            "timestamp": datetime.datetime.now().isoformat(),
+            "url": f"http://localhost:5000/history_clips/{filename}"
+        }
+        try:
+            history_ref.push(clip_metadata)
+            print(f"Clip metadata for {filename} pushed to Firebase history.")
+        except Exception as e:
+            print(f"Error pushing clip metadata to Firebase: {e}")
 
 
     # Save the clip from the buffer in a new thread
