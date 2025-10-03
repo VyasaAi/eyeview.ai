@@ -194,6 +194,71 @@ def get_location():
         print(f"Could not get location: {e}")
         return "Unknown Location"
 
+def send_alert(confidence):
+    """Handles the alerting logic: logging, Firebase push, and Twilio SMS."""
+    global last_alert_time
+    current_time = time.time()
+    if current_time - last_alert_time < ALERT_COOLDOWN:
+        print("Alert in cooldown period. Skipping.")
+        return
+
+
+    print("--- ALERT TRIGGERED ---")
+    last_alert_time = current_time
+    timestamp = datetime.datetime.now()
+    location = get_location()
+
+
+    # Generate clip filename
+    clip_filename = f"clip_{timestamp.strftime('%Y%m%d_%H%M%S')}.mp4"
+
+
+    alert_data = {
+        "time": timestamp.strftime("%Y-%m-%d %H:%M:%S"),
+        "confidence": round(confidence, 2),
+        "location": location,
+        "video_url": f"http://localhost:5000/history_clips/{clip_filename}"
+    }
+
+
+    # Log alert locally
+    with open("alert_log.json", "a") as log_file:
+        log_file.write(json.dumps(alert_data) + "\n")
+
+
+    # Push to Firebase
+    if firebase_initialized:
+        try:
+            alert_ref.push(alert_data)
+            print("Alert pushed to Firebase.")
+        except Exception as e:
+            print(f"Error pushing alert to Firebase: {e}")
+
+
+
+
+    # Send SMS via Twilio
+    if client:
+        try:
+            message_body = f"Violence detected at {alert_data['time']} | Confidence: {alert_data['confidence']:.2f} | Location: {alert_data['location']}"
+            client.messages.create(
+                body=message_body,
+                from_=TWILIO_PHONE_NUMBER,
+                to=ADMIN_PHONE_NUMBER
+            )
+            print("Twilio alert SMS sent.")
+        except Exception as e:
+            print(f"Error sending Twilio SMS: {e}")
+
+
+
+
+    # Save the clip from the buffer in a new thread
+    with frame_lock:
+        frames_to_save = list(frame_buffer)
+   
+    Thread(target=save_clip, args=(clip_save_dir, clip_filename, frames_to_save)).start()
+
 def detect_and_stream():
     """
     Main loop to read frames, run detection, update buffer, and yield frames for streaming.
