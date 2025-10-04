@@ -492,6 +492,56 @@ def get_alerts():
         pass
     return jsonify({"alerts": alerts})
 
+@app.route('/auth/analytics', methods=['GET'])
+@jwt_required()
+def get_analytics():
+    current_user = get_jwt_identity()
+    users = load_users()
+    user = users.get(current_user)
+
+
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+
+
+    # Get all users for admin stats (simplified - in production, check admin role)
+    all_users = load_users()
+
+
+    # Calculate analytics
+    total_users = len(all_users)
+    active_users = sum(1 for u in all_users.values() if u.get('analytics', {}).get('last_login'))
+
+
+    # Login trends (last 7 days)
+    login_trends = {}
+    for u in all_users.values():
+        history = u.get('analytics', {}).get('login_history', [])
+        for login in history[-30:]:  # Last 30 logins
+            date = login['timestamp'][:10]  # YYYY-MM-DD
+            login_trends[date] = login_trends.get(date, 0) + 1
+
+
+    # User-specific analytics
+    user_analytics = user.get('analytics', {
+        'login_count': 0,
+        'last_login': None,
+        'login_history': [],
+        'total_alerts_viewed': 0,
+        'total_clips_viewed': 0
+    })
+
+
+    return jsonify({
+        'user_analytics': user_analytics,
+        'global_analytics': {
+            'total_users': total_users,
+            'active_users': active_users,
+            'login_trends': login_trends
+        }
+    }), 200
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
 
