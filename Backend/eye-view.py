@@ -542,6 +542,67 @@ def get_analytics():
     }), 200
 
 
+
+@app.route('/history_clips')
+def list_clips():
+    """
+    Lists all saved video clips, providing a web-accessible URL for each.
+    """
+    clips_array = []
+   
+    if not os.path.exists(clip_save_dir):
+        return jsonify([])
+
+
+    files = sorted(
+        [f for f in os.listdir(clip_save_dir) if f.endswith('.mp4')],
+        key=lambda f: os.path.getmtime(os.path.join(clip_save_dir, f)),
+        reverse=True
+    )
+
+
+    for filename in files:
+        filepath = os.path.join(clip_save_dir, filename)
+        timestamp = os.path.getmtime(filepath)
+
+
+        # Check if thumbnail exists
+        thumbnail_filename = f"{os.path.splitext(filename)[0]}_thumb.jpg"
+        thumbnail_path = os.path.join(clip_save_dir, thumbnail_filename)
+        thumbnail_url = f"/thumbnails/{thumbnail_filename}" if os.path.exists(thumbnail_path) else None
+
+
+        clips_array.append({
+            "id": filename,
+            "filename": filename,
+            "timestamp": datetime.datetime.fromtimestamp(timestamp).isoformat(),
+            # This relative URL is used by the frontend to construct the full playable path.
+            "url": f"/history_clips/{filename}",
+            "thumbnail_url": thumbnail_url
+        })
+    return jsonify(clips_array)
+
+
+
+
+
+
+
+
+# **RE-ENABLED:** This route is necessary for the frontend to fetch the video files.
+@app.route('/history_clips/<path:filename>')
+def stream_video(filename):
+    """Serves a specific video clip file."""
+    return send_from_directory(clip_save_dir, filename, mimetype='video/mp4')
+
+
+@app.route('/thumbnails/<path:filename>')
+def serve_thumbnail(filename):
+    """Serves a specific thumbnail image."""
+    return send_from_directory(clip_save_dir, filename, mimetype='image/jpeg')
+
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
 
