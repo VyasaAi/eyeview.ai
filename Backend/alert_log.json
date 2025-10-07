@@ -4,3 +4,6 @@
 {"time": "2025-09-24 08:07:28", "confidence": 0.41, "location": "Mumbai, Maharashtra, India", "video_url": "http://localhost:5000/history_clips/clip_20250924_080728.mp4"}
 
 {"time": "2025-09-24 01:48:46", "confidence": 0.45, "location": "Mumbai, Maharashtra, India", "video_url": "http://localhost:5000/history_clips/clip_20250924_014846.mp4"}
+{"time": "2025-10-07 08:25:30", "confidence": 0.45, "location": "Mumbai, Maharashtra, India", "video_url": "http://localhost:5000/history_clips/clip_20251007_082530.mp4"}
+{"time": "2025-10-07 08:26:11", "confidence": 0.44, "location": "Mumbai, Maharashtra, India", "video_url": "http://localhost:5000/history_clips/clip_20251007_082611.mp4"}
+{"time": "2025-10-07 08:37:43", "confidence": 0.4, "location": "Mumbai, Maharashtra, India", "video_url": "http://localhost:5000/history_clips/clip_20251007_083743.mp4"}
